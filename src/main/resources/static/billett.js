@@ -32,9 +32,7 @@ function populateHTML(objArr){
     document.getElementById("resultObject").innerHTML = html;
     console.log(html)
 } **/
-$(function (){
-    hentFilmene();
-});
+
 let movies = [];
 function hentFilmene(){
     $.get("/hentFilm", function (data){
@@ -64,11 +62,11 @@ function regBillett(){
     const fn =$("#fname").val();
     const qnt =$("#quantity").val();
     const phn =$("#phonenr").val();
-    const ep =$("#epost").val();
-    const film =$("#film").val();
+    const ep =$("#mail").val();
+    const film =$("#velgeFilm").val();
 
-    let riktig = validerLname(ln, "Etternavn") * validerFname(fn , "Fornavn") * validerAntall(qnt,"quantity")*
-        validerMobilnr(phn,"Mobilnummer") * validerEpost(ep, "epost") ;
+    let riktig = validerLname(ln, "Lastname") * validerFname(fn , "Firstname") * validerAntall(qnt,"quantity")*
+        validerMobilnr(phn,"Phonenumber") * validerEpost(ep, "epost") ;
 
     if (riktig){
         const billett = {
@@ -86,15 +84,39 @@ function regBillett(){
         $("#fname").val("");
         $("#quantity").val("");
         $("#phonenr").val("");
-        $("#epost").val("");
-        $("#film").val("--velg film");
+        $("#mail").val("");
+        $("#velgeFilm").val("--velg film");
     }
 
 }
-
-function SlettArray(){
-    objArray = [];
-    populateHTML(objArray);
+function hentAlle(){
+    $.get("/hentAlle", function (data){
+        formaterData(data);
+    })
+}
+function formaterData(data){
+    let ut = "<table class='table table-striped'><th><th>lname</th><th>fname</th><th>phonenr</th><th>epost</th><th>quantity</th>"
+    +"<th>film</th>";
+    for (const billett of data){
+        ut += "<tr><td>"+ billett.lname + "</td><td>" + billett.fname + "</td><td>" +
+              billett.phonenr + "</td><td>" + billett.epost + "</td><td>" + billett.quantity +
+            "</td><>" + billett.film + "<td><button class='btn btn-danger' onclick='slettEn("+ billett.id+ ")'>Slett</button></td></tr>";
+    }
+    ut +="</table>";
+    $("#bilett").html(ut);
+}
+function slettEn(id){
+    let url ="/slettEn?id=" + id;
+    $.get(url, function (){
+        hentAlle();
+    })
+}
+function slettAlle(){
+    $.get("/slettAlle", function (){
+        hentAlle();
+    });
+    //objArray = [];
+    //populateHTML(objArray);
 }
 
 function validerFname(fname){
