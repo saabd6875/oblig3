@@ -13,17 +13,21 @@ public class BillettController {
     @Autowired
     BillettRepository rep;
 
-    @PostMapping("/lagre")
+    @PostMapping("/lagreOrdre")
     public void lagreOrdre(Billett billett){ rep.lagreOrdre(billett);}
 
     @GetMapping("/hentAlle")
     public List<Billett> hentAlle(){ return rep.hentAlle();}
 
-    @GetMapping("/hentFilm")
-    public List<Movie> hentFilm(){return rep.hentFilm();}
+    @GetMapping("/hentMovies")
+    public List<Movie> hentMovies(){
+        return rep.hentMovies();
+    }
 
     @GetMapping("/slettAlle")
-    public void slettAlle(){rep.slettAlle();}
+    public void slettAlle(){
+        rep.slettAlle();
+    }
 
     @GetMapping("/slettEn")
     public void slettEn(int id){rep.slettEn(id);}

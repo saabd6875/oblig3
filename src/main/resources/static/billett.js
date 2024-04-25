@@ -32,41 +32,66 @@ function populateHTML(objArr){
     document.getElementById("resultObject").innerHTML = html;
     console.log(html)
 } **/
+$(function (){
+    hentFilmene();
+});
 
-let movies = [];
+let filmer = [];
 function hentFilmene(){
-    $.get("/hentFilm", function (data){
-        movies = data;
-        formaterFilm(data);
+    $.get("/hentMovies", function (movies){
+        filmer = movies;
+        formaterFilm(movies);
 
     });
 }
-function formaterFilm(data){
+
+function formaterFilm(movies){
     let filmList =[];
 
-    let ut = "<select id = 'velgeFilm'>";
+    let ut = "<select id='film'>";
     ut+="<option>--velg film-- </option>";
-    for (const movie of data){
-        if (!filmList.includes(movie.film)){
-            ut+="<option>"+ movie.film +"</option>";
+    for (const billett of movies){
+        if (!filmList.includes(billett.film)){
+            ut+="<option>"+ billett.film +"</option>";
         }
-        filmList.push(movie.film);
+        filmList.push(billett.film);
     }
     ut+="</select>";
-
     $("#film-div").html(ut);
+    console.log("formater film");
+}
+
+
+//source: github url:
+function sjekkGyldig(data, felt){
+    // A couple of variables to avoid repetition
+    const felt_lc = felt.toLowerCase();
+    const error = "#"+felt_lc+"-error"
+
+    if (data === ""){
+        $(error).html(felt + " må fylles.");
+        return false;
+    }
+    if (data === ("--Velg " + felt_lc + "--")){
+        $(error).html("Må velge en " + felt_lc + ".");
+        return false;
+    }
+
+    $(error).html("");
+    return true;            // No need for "else" because this line will only be reached if all is good.
 }
 
 function regBillett(){
+    console.log("button clicked")
     const ln =$("#lname").val();
     const fn =$("#fname").val();
     const qnt =$("#quantity").val();
     const phn =$("#phonenr").val();
     const ep =$("#mail").val();
-    const film =$("#velgeFilm").val();
+    const film =$("#film").val();
 
-    let riktig = validerLname(ln, "Lastname") * validerFname(fn , "Firstname") * validerAntall(qnt,"quantity")*
-        validerMobilnr(phn,"Phonenumber") * validerEpost(ep, "epost") ;
+    let riktig = sjekkGyldig(ln, "Last name") * sjekkGyldig(fn, "first name") * sjekkGyldig(qnt, "quantity") * sjekkGyldig(phn, "phone number")
+        * sjekkGyldig(ep, "Epost") * sjekkGyldig(film, "film");
 
     if (riktig){
         const billett = {
@@ -85,28 +110,29 @@ function regBillett(){
         $("#quantity").val("");
         $("#phonenr").val("");
         $("#mail").val("");
-        $("#velgeFilm").val("--velg film");
+        $("#film").val("--velg film");
     }
+}
+console.log("film registrering")
+//funksjon som henter alle ordre / daata som ble registrert.
+function hentAlle(){
+    $.get("/hentAlle", function (movies){
+        formaterData(movies);
+    })
 
 }
-function hentAlle(){
-    $.get("/hentAlle", function (data){
-        formaterData(data);
-    })
-}
-function formaterData(data){
-    let ut = "<table class='table table-striped'><th><th>lname</th><th>fname</th><th>phonenr</th><th>epost</th><th>quantity</th>"
-    +"<th>film</th>";
-    for (const billett of data){
-        ut += "<tr><td>"+ billett.lname + "</td><td>" + billett.fname + "</td><td>" +
-              billett.phonenr + "</td><td>" + billett.epost + "</td><td>" + billett.quantity +
-            "</td><>" + billett.film + "<td><button class='btn btn-danger' onclick='slettEn("+ billett.id+ ")'>Slett</button></td></tr>";
+function formaterData(movies){
+    let ut = "<table class='table table-striped'><th><th>last name</th><th>first name</th><th>phone nr</th><th>E-post</th><th>quantity</th><th>film</th>";
+    for (const movie of movies){
+        ut += "<tr><td>"+ movie.lname + "</td><td>" + movie.fname + "</td><td>" +
+              movie.phonenr + "</td><td>" + movie.epost + "</td><td>" + movie.quantity +
+            "</td><td>" + movie.film + "<td><button class='btn btn-danger' onclick='slettEn("+ movie.id+ ")'>Slett</button></td></tr>";
     }
     ut +="</table>";
-    $("#bilett").html(ut);
+    $("#ordre").html(ut);
 }
 function slettEn(id){
-    let url ="/slettEn?id=" + id;
+    let url ="/slettEn?id="+id;
     $.get(url, function (){
         hentAlle();
     })

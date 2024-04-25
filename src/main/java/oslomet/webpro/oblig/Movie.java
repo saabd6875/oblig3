@@ -7,10 +7,12 @@ public class Movie {
     }
 
     public String getFilm() {
+
         return film;
     }
 
     public void setFilm(String film) {
+
         this.film = film;
     }
 }

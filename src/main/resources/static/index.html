@@ -7,7 +7,7 @@
 </head>
 <body>
 <script src="billett.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
 <h1> Bestilling av kinobilletter.</h1>
@@ -16,9 +16,10 @@
         <div class="col-md-4">
             <form class="form">
                 <input type="hidden" id="id">
+
                 <div class="form-group">
                     <label for="film-div" class="dropdown">Choose a movie</label>
-                    <div id="film-div" class="dropdown">
+                    <div id="film-div" class="drop-down">
 
                     </div>
                 </div>
@@ -83,11 +84,11 @@
                                 <span id="feilMail" style="color: red"></span> </td></tr>
                     </table>-->
             </form>
-            <button class="btn btn-primary" onclick="regBillett()">Kjøp billett</button>
+            <button class="btn btn-primary" onclick="regBillett()">register billett</button>
         </div>
         <div class="col-md-8">
             <h2>Alle billetene:</h2>
-            <div id="bilett" class="table-responsive"></div>
+            <div id="ordre" class="table-responsive"></div>
             <button class="btn btn-danger" onclick="slettAlle()">Slett alle billetene</button>
         </div>
     </div>

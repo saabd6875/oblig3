@@ -1,4 +1,4 @@
-CREATE TABLE Movie (
+CREATE TABLE Movies (
     film VARCHAR(25) NOT NULL,
     PRIMARY KEY (film)
 );
@@ -12,5 +12,11 @@ CREATE TABLE Billett(
     epost VARCHAR (20) NOT NULL,
     film VARCHAR (25) NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (film) REFERENCES Movie(film)
+    FOREIGN KEY (film) REFERENCES Movies(film)
 );
+
+INSERT INTO Movies(film) VALUES ('LA LA Land');
+INSERT INTO Movies(film) VALUES ('When Marnie was there');
+INSERT INTO Movies(film) VALUES ('Howls Moving Castle');
+INSERT INTO Movies(film) VALUES ('Totoro');
+INSERT INTO Movies(film) VALUES ('Kikis delivery service');
