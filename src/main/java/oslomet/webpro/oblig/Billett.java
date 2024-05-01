@@ -1,9 +1,8 @@
 package oslomet.webpro.oblig;
 
 
-
 public class Billett {
-    private int id;
+    private Long id;
     private String lname;
     private String fname;
     private String phonenr;
@@ -11,8 +10,7 @@ public class Billett {
     private String epost;
     private String film;
 
-    public Billett(int id, String lname, String fname, String phonenr,String quantity,
-                 String epost, String film) {
+    public Billett(Long id, String lname, String fname, String phonenr, String quantity, String epost, String film) {
         this.id = id;
         this.lname =lname;
         this.fname = fname;
@@ -23,11 +21,15 @@ public class Billett {
 
     }
 
-    public int getId() {
+    public Billett(){
+        //default constructure
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

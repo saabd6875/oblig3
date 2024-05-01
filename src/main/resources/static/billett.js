@@ -1,24 +1,32 @@
-/**
-let objArray= [];
-function addToArray() {
+
+//let objArray= [];
+function regBillett() {
     console.log("button clicked");
-    let film = document.getElementById("film").value;
-    let antall = document.getElementById("quantity").value;
-    let fname = document.getElementById("fname").value;
-    let lname = document.getElementById("lname").value;
-    let phonenr = document.getElementById("phonenr").value;
-    let mail = document.getElementById("mail").value;
-    objArray.push({
-        filmkey: film,
-        antallkey: antall,
-        fnameKey: fname,
-        lnameKey: lname,
-        phonenrKey: phonenr,
-        mailKey: mail
+    billett = {
+
+        "film": document.getElementById("film").value,
+        "quantity" : document.getElementById("quantity").value,
+        "fname": document.getElementById("fname").value,
+        "lname": document.getElementById("lname").value,
+        "phonenr": document.getElementById("phonenr").value,
+        "epost" : document.getElementById("epost").value
+    }
+    $.post("/lagre", billett, function (movies) {
+        console.log("values sent to database");
+        document.getElementById("film").value = "";
+        document.getElementById("quantity").value = "";
+        document.getElementById("fname").value = "";
+        document.getElementById("lname").value = "";
+        document.getElementById("phonenr").value = "";
+        document.getElementById("epost").value = "";
+    }).fail(function (xhr, status, error) {
+        console.error("Failed to send data to database", error)
     });
-    console.log(objArray);
-    populateHTML(objArray);
 }
+/**
+ console.log(objArray);
+ populateHTML(objArray);
+ }
 function populateHTML(objArr){
     console.log("array")
     let html = "<ol>";
@@ -32,104 +40,53 @@ function populateHTML(objArr){
     document.getElementById("resultObject").innerHTML = html;
     console.log(html)
 } **/
-$(function (){
-    hentFilmene();
-});
-
-let filmer = [];
-function hentFilmene(){
-    $.get("/hentMovies", function (movies){
-        filmer = movies;
-        formaterFilm(movies);
-
-    });
-}
-
-function formaterFilm(movies){
-    let filmList =[];
-
-    let ut = "<select id='film'>";
-    ut+="<option>--velg film-- </option>";
-    for (const billett of movies){
-        if (!filmList.includes(billett.film)){
-            ut+="<option>"+ billett.film +"</option>";
-        }
-        filmList.push(billett.film);
-    }
-    ut+="</select>";
-    $("#film-div").html(ut);
-    console.log("formater film");
-}
-
-
-//source: github url:
-function sjekkGyldig(data, felt){
-    // A couple of variables to avoid repetition
-    const felt_lc = felt.toLowerCase();
-    const error = "#"+felt_lc+"-error"
-
-    if (data === ""){
-        $(error).html(felt + " må fylles.");
-        return false;
-    }
-    if (data === ("--Velg " + felt_lc + "--")){
-        $(error).html("Må velge en " + felt_lc + ".");
-        return false;
-    }
-
-    $(error).html("");
-    return true;            // No need for "else" because this line will only be reached if all is good.
-}
-
-function regBillett(){
-    console.log("button clicked")
-    const ln =$("#lname").val();
-    const fn =$("#fname").val();
-    const qnt =$("#quantity").val();
-    const phn =$("#phonenr").val();
-    const ep =$("#mail").val();
-    const film =$("#film").val();
-
-    let riktig = sjekkGyldig(ln, "Last name") * sjekkGyldig(fn, "first name") * sjekkGyldig(qnt, "quantity") * sjekkGyldig(phn, "phone number")
-        * sjekkGyldig(ep, "Epost") * sjekkGyldig(film, "film");
-
-    if (riktig){
-        const billett = {
-            lname : ln,
-            fname : fn,
-            quantity : qnt,
-            phonenr : phn,
-            epost : ep,
-            film : film,
-        };
-        $.post("/lagre", billett, function (){
-            hentAlle();
-        });
-        $("#lname").val("");
-        $("#fname").val("");
-        $("#quantity").val("");
-        $("#phonenr").val("");
-        $("#mail").val("");
-        $("#film").val("--velg film");
-    }
-}
-console.log("film registrering")
 //funksjon som henter alle ordre / daata som ble registrert.
 function hentAlle(){
     $.get("/hentAlle", function (movies){
-        formaterData(movies);
+        console.log(movies);
+        let ut = "<table class='table table-striped'><tr><th>last name</th><th>First name</th><th>phone nr</th><th>E post</th><th>quantity</th><th>Movie</th></tr>";
+        movies.forEach(function (movie){
+            ut += "<tr><td>"+ movie.lname + "</td>" +
+                "<td>" + movie.fname + "</td>" +
+                "<td>" + movie.phonenr + "</td>" +
+                "<td>" + movie.epost + "</td>" +
+                "<td>" + movie.quantity + "</td>" +
+                "<td>" + movie.film + "<td>" +
+                "<button class='btn btn-danger' onclick='updateBillett(" + movie.id+ ")'>Choose</button></td>" +
+                "<td>"+"<button class='btn btn-danger' onclick='slettEn(" + movie.id + ")'>Slett</button></td></tr>";
+        })
+        ut +="</table>";
+        document.getElementById("ordre").innerHTML = ut;
+        //formaterData(movies);
     })
 
 }
-function formaterData(movies){
-    let ut = "<table class='table table-striped'><th><th>last name</th><th>first name</th><th>phone nr</th><th>E-post</th><th>quantity</th><th>film</th>";
-    for (const movie of movies){
-        ut += "<tr><td>"+ movie.lname + "</td><td>" + movie.fname + "</td><td>" +
-              movie.phonenr + "</td><td>" + movie.epost + "</td><td>" + movie.quantity +
-            "</td><td>" + movie.film + "<td><button class='btn btn-danger' onclick='slettEn("+ movie.id+ ")'>Slett</button></td></tr>";
+function updateBillett(id){
+    document.getElementById("idBillett").innerHTML = id;
+    $.get("/getBillettFromDB?id=" + id , function (movies){
+        document.getElementById("lnameEdit").value = movies.lname;
+        document.getElementById("fnameEdit").value = movies.fname;
+        document.getElementById("phonenrEdit").value = movies.phonenr;
+        document.getElementById("epostEdit").value = movies.epost;
+        document.getElementById("quantityEdit").value = movies.quantity;
+        document.getElementById("filmEdit").value = movies.film;
+    })
+    console.log(id);
+}
+
+function updateBillettInD(){
+    billett ={
+        "id": document.getElementById("idBillett").innerHTML,
+        "lname":document.getElementById("lnameEdit").value,
+        "fname":document.getElementById("fnameEdit").value,
+        "phonenr":document.getElementById("phonenrEdit").value,
+        "epost":document.getElementById("epostEdit").value,
+        "quantity":document.getElementById("quantityEdit").value,
+        "film":document.getElementById("filmEdit").value,
     }
-    ut +="</table>";
-    $("#ordre").html(ut);
+    console.log( document.getElementById("idBillett").value);
+    console.log(billett);
+    $.post("/updateBillett", billett, function (movies){})
 }
 function slettEn(id){
     let url ="/slettEn?id="+id;
@@ -140,11 +97,12 @@ function slettEn(id){
 function slettAlle(){
     $.get("/slettAlle", function (){
         hentAlle();
-    });
+    })
     //objArray = [];
     //populateHTML(objArray);
 }
 
+/**
 function validerFname(fname){
     const regexp = /^[a-zA-ZæøåÆØÅ. \-]{2,20}$/;
     const ok = regexp.test(fname);
@@ -190,14 +148,16 @@ function validerMobilnr (phonenr){
     }
 }
 
-function validerEpost (mail){
+function validerEpost (epost){
     const regexp = /^[a-zA-Z0-9-_%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    const ok = regexp.test(mail);
+    const ok = regexp.test(epost);
     if(!ok) {
-        $("#feilMail").html("Du må skrive gyldig epost adresse")
+        $("#feilEpost").html("Du må skrive gyldig epost adresse")
         return false;
     }else {
-        $("#feilMail").html("");
+        $("#feilEpost").html("");
         return true;
     }
+
 }
+ **/

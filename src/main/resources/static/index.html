@@ -2,104 +2,87 @@
 
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
+    <link rel="shortcut icon" href="#">
     <meta charset="UTF-8">
     <title>kinobilleter</title>
 </head>
 <body>
 <script src="billett.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
-<h1> Bestilling av kinobilletter.</h1>
+
 <div class="container">
     <div class="row">
         <div class="col-md-4">
+            <h1> Bestilling av kinobilletter.</h1>
             <form class="form">
-                <input type="hidden" id="id">
-
                 <div class="form-group">
-                    <label for="film-div" class="dropdown">Choose a movie</label>
-                    <div id="film-div" class="drop-down">
-
-                    </div>
+                    <label for="film" class="dropdown">Film</label>
+                    <select id="film" class="drop-down">
+                        <option value="Haunted">Haunted</option>
+                        <option value="Inside Out">Inside Out</option>
+                        <option value="When Marnie was there">When Marnie was there</option>
+                        <option value="Queen of tears">Queen of tears</option>
+                        <option value="Totoro">Totoro</option>
+                        <option value="Spiderman">Spiderman</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="lname">last name</label>
-                    <input class="form-control" id="lname" type="text" onchange="validerLname()">
-                    <div id="feilLname" style="color: red"></div>
+                    <label for="lname">Last name</label>
+                    <input id="lname" type="text">
                 </div>
                 <div class="form-group">
                     <label for="fname">First name</label>
-                    <input class="form-control" id="fname" type="text" onchange="validerFname()">
-                    <div id="feilFname" style="color: red"></div>
+                    <input id="fname" type="text">
                 </div>
                 <div class="form-group">
-                    <label for="phonenr">phone number</label>
-                    <input class="form-control" id="phonenr" type="text" onchange="validerMobilnr()">
-                    <div id="feilPhonenr" style="color: red"></div>
+                    <label for="phonenr">Phone number</label>
+                    <input id="phonenr" type="tel" maxlength="8">
+
                 </div>
                 <div class="form-group">
-                    <label for="mail">Email</label>
-                    <input class="form-control" id="mail" type="text" onchange="validerEpost()">
-                    <div id="feilMail" style="color: red"></div>
+                    <label for="epost">Epost</label>
+                    <input id="epost" type="email">
                 </div>
                 <div class="form-group">
-                    <label for="quantity">Quantity</label>
-                    <input class="form-control" id="quantity" type="text" onchange="validerAntall()">
-                    <div id="feilQuantity" style="color: red"></div>
+                    <label for="quantity">quantity</label>
+                    <input  id="quantity" type="text" maxlength="2">
                 </div>
-                <!--
-                    <tr> <td>Velg film:</td>
-                        <td>
-                            <select id="film" title="velg film her:">
-                                <option>Titanic.</option>
-                                <option>Lala Land.</option>
-                                <option>Howls Moving Castle.</option>
-                                <option>The Movie.</option>
-                            </select>
-                        </td>
-                    </tr>
-                </input>-->
-                <!--<div>
-                    <label for="quantity">Antall:</label>
-                    <input type="number" id="quantity"  onchange="validerAntall(this.value)" required>
-                    <span id="feilQuantity" style="color: red"></span>
-                </div>
-                <br>
-                <br>
-                <div>-->
-                    <!--
-                    <table>
-                        <tr><td><label for="fname">Fornavn </label></td>
-                            <td><input type="text" id="fname" onchange="validerFname(this.value)">
-                                <span id="feilFname" style="color: red"></span> </td></tr>
-                        <tr><td><label for="lname">Etternavn</label> </td>
-                            <td><input type="text" id="lname" onchange="validerLname(this.value)">
-                                <span id="feilLname" style="color: red"></span></td></tr>
-                        <tr> <td><label for="phonenr">Telefonnr</label></td>
-                            <td><input type="tel" id="phonenr" onchange="validerMobilnr(this.value)">
-                                <span id="feilPhonenr" style="color: red"></span> </td></tr>
-                        <tr><td><label for="mail">Epost</label></td>
-                            <td><input type="email" id="mail" onclick="validerEpost(this.value)">
-                                <span id="feilMail" style="color: red"></span> </td></tr>
-                    </table>-->
             </form>
             <button class="btn btn-primary" onclick="regBillett()">register billett</button>
         </div>
         <div class="col-md-8">
+            <div>
+            <button class="btn btn-success" onclick="hentAlle()">Hent alle billetter</button>
+            </div>
             <h2>Alle billetene:</h2>
             <div id="ordre" class="table-responsive"></div>
+            <br>
+
             <button class="btn btn-danger" onclick="slettAlle()">Slett alle billetene</button>
         </div>
     </div>
+    <div>
+        <h2> Oppdater valgt billett</h2>
+        <p>ID:</p><p id="idBillett"></p>
+        <label>Last name</label><br>
+        <input type="text" id="lnameEdit"><br>
+        <label>First name</label><br>
+        <input type="text" id="fnameEdit"><br>
+        <label>Phone nr</label><br>
+        <input type="tel" id="phonenrEdit" ><br>
+        <label>Epost</label><br>
+        <input type="email" id="epostEdit"><br>
+        <label>quantity</label><br>
+        <input type="text" id="quantityEdit" ><br>
+        <label>Film</label><br>
+        <input type="text" id="filmEdit">
+        <br>
+        <button onclick="updateBillettInD()">Update</button>
+        <br>
+    </div>
 </div>
-<!--
-<h2>Alle billetter:</h2>
 
-<h3>Film Antall Fornavn Etternavn Tlfnr Epost</h3>
-<p id="resultObject"></p>
-
-
-<button type="button" onclick="SlettArray()">Slett billtene</button> -->
 </body>
 </html>

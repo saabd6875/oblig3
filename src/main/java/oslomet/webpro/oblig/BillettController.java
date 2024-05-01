@@ -3,6 +3,7 @@ package oslomet.webpro.oblig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -13,15 +14,18 @@ public class BillettController {
     @Autowired
     BillettRepository rep;
 
-    @PostMapping("/lagreOrdre")
-    public void lagreOrdre(Billett billett){ rep.lagreOrdre(billett);}
+    @PostMapping("/lagre")
+    public void lagreOrdre(Billett billett){ rep.lagreOrdre(billett);
+    }
 
     @GetMapping("/hentAlle")
-    public List<Billett> hentAlle(){ return rep.hentAlle();}
+    public List<Billett> hentAlle(){
+        return rep.hentAlle();
+    }
 
-    @GetMapping("/hentMovies")
-    public List<Movie> hentMovies(){
-        return rep.hentMovies();
+    @GetMapping("/getBillettFromDB")
+    public Billett getBillettFromDB(@RequestParam Long id){
+        return rep.findById(id);
     }
 
     @GetMapping("/slettAlle")
@@ -30,5 +34,13 @@ public class BillettController {
     }
 
     @GetMapping("/slettEn")
-    public void slettEn(int id){rep.slettEn(id);}
+    public void slettEn(Long id){rep.slettEn(id);}
+
+    @PostMapping("/updateBillett")
+    public String updateBillett(Billett billett){
+        rep.updateBillett(billett);
+        return "oppdatert";
+    }
+
 }
+
